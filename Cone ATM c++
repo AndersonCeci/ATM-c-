@@ -1,0 +1,274 @@
+#include <iostream>
+#include <fstream>
+#include <conio.h>
+#include <string>
+using namespace std;
+
+class User {
+
+public:
+    string username;
+    string password;
+    string inputUsername;
+    string inputPassword;
+    float balance = 0.00;
+    float withdrawDeposit = 0.00;
+    float number = 0.00;
+    int userChoice;
+    float deposit = 0.00;
+    float withdraw = 0.00;
+    
+    
+    // Regjistrohet Perdoruesi
+    void userRegisterDo()
+    {
+
+        ofstream usersFile ("userData1.txt");
+
+        if (	!usersFile.is_open())
+        {
+            usersFile.open("userData1.txt");
+        }
+
+            usersFile << username << " " << password <<endl;
+
+            usersFile.close();
+    }
+
+    // Te dhenat e perdoruesit
+    void userRegister()
+    {
+        cout << "Mireseerdhet!\n-------------------------\n\nJu lutem regjistrohuni.\nFusni emrin tuaj\n";
+        cin >> username;
+
+        cout << "\nFusni kodin tuaj: \n";
+        cin >> password;
+
+        userRegisterDo();
+    }
+
+
+    // Funksjoni per te hyre (login).
+    void login()
+    {
+    	
+    	
+    	
+		
+        cout << "Ju lutem fusni emrin tuaj\n";
+        cin >> inputUsername;
+
+        cout << "\nJu lutem fusni paswordin\n";
+        cin >> inputPassword;
+
+        string userAndPass = inputUsername + " " + inputPassword;
+        int offset; 
+        string line;
+        ifstream usersFile;
+        usersFile.open ("userData1.txt");
+  
+        if(usersFile.is_open())
+        {
+            bool found = false;
+      if(usersFile.is_open()) {
+          while(getline(usersFile,line) && !found) {
+              if (line.compare(userAndPass) == 0) { 
+                  found = true; 
+              }
+          }
+	usersFile.close(); 
+	if(found) {
+		
+		userInterface();
+	}
+	else {
+		cout << "\nEmri ose passwordi eshte gabim\n\n\n\n";
+		login(); 
+	}
+      }
+
+			usersFile.close();
+        }
+        else
+            cout << "userData.txt nuk hapet" << endl;
+    }
+
+
+
+
+void atmMainMenu()
+    {
+    	cout << "-------------------------------------------\n";
+        cout << "         CONE Bank ATM machine\n";
+        cout << "-------------------------------------------\n" << endl;
+        cout << "Ju lutem zgjidni nje nga opsionet e meposhtme: \n";
+        cout << "1. Hyrje\n";
+        cout << "2. Regjistrohu\n";
+        cout << "3. Mbyll ATM\n" << endl;
+        cout << "Ju lutem zgjidhni nje opsion: ";
+        cin >> userChoice;
+        
+        
+        
+        // Kontrollon zgjedhjen e perdoruesit dhe ekzekuton funksjonin
+    switch (userChoice)
+    {
+        // Case 1 - Shfaq menune e Hyrjes(Login).
+        case 1:
+            login();
+            break;
+ 
+        // Case 2 - Krijon emrin dhe PIN-in.
+        case 2:
+            userRegisterDo();
+            userRegister();
+            atmMainMenu();
+            break;
+ 
+        // Case 3 - Mbyllet programi.
+        case 3:
+        	cout << "-------------------------------------------";
+            cout << "\nFaleminderit qe perdoret ATM tone!\n";
+            cout << "\n CONE BANK Gjitmone Prane Jush!\n";
+            cout<< "-------------------------------------------";
+            exit(0);
+            break;
+ 
+        // TEST ERROR MESSAGE.
+        default:
+            cout << "INTERNAL ERROR" << endl;
+	}
+    
+}
+
+
+
+void userInterface()
+{
+	
+	
+	cout << "Welcome "<< inputUsername << '\n';
+		cout << "-------------------------------------------\n";
+        cout << "                 Menuja e Veprimeve\n";
+        cout << "-------------------------------------------\n" << endl;
+        cout << "1. Depozito Leke\n";
+        cout << "2. Terhiq Leke\n";
+        cout << "3. Kontrollo Balancen\n";
+        cout << "4. Dile\n";
+        cout << "Zgjedhja juaj : ";
+        cin >> userChoice;
+        
+ 
+            // Kontrollon zgjedhjen e perdoruesit dhe ekzekuton funksjonin
+            switch(userChoice)
+            {
+                // Case 1 - Kerkon te depozitoje shumen e kerkuar.
+                case 1:
+                    balance = deposit;
+                    cout << "Fusni shumen qe doni te deopozitoni:LEKE ";
+                    cin >> withdrawDeposit;
+                    cout << "\nDepozita u krye me sukses! ";
+                    cout << endl;
+                    balance += withdrawDeposit;
+                    
+                userInterface();
+                    
+                    break;
+ 
+                // Case 2 - Kerkon te zgjedhe shumen qe do te terheqe.
+                case 2:
+                    balance = withdraw;
+                    cout << "Fusni shumen qe doni te terhiqni: "<<balance<<" LEKE ";
+                    cin >> number;
+                  
+                    
+                    userInterface();
+                    balance -= number;  
+ 
+        // Kontrollon neqoftese perdoruesi ka fonde mjaftueshem per te terhequr leke
+        while (balance < 0.00)
+        {
+            // Shfaq nje Error neqoftese perdoruesi nuk ka leke mjaftueshem
+            // Dhe e kthen perdoruesin ne menuja kryesore
+            int userChoice = 0;
+            cout << "\n          **ERROR** - Terheqja e lekeve.\n";
+            cout << "Ju nuk keni leke mjaftueshem.\n";
+            cout << endl;
+            cout << "Zgjidhni nga menuja perseri.\n";
+            cout << endl;
+            balance += number;
+            
+            userInterface();
+        }
+ 
+    // Tregon vleren e mbetur neqoftese terheqja eshte bere me sukses
+    cout << "\nTerhqeja u krye me sukes! ";
+    cout << endl;
+                    break;
+ 
+                // Case 3 - Shfaq shumen e lekeve qe ka perdoruesi ne Llogari.
+                case 3:
+                    cout << "\nShuma juaj e lekeve eshte: "<<balance<<"LEKE";
+                    cout << endl;
+                    userInterface();
+                    break;
+                    
+ 
+                 // Case 4 - Programi mbyllet.
+                case 4:
+                    userChoice = 0;
+                    cout << "-------------------------------------------\n";
+                    cout << "\nFaleminderit qe perdoret ATM tone!\n";
+                    cout << "\n CONE BANK Gjitmone Prane Jush!\n";
+                    cout << "-------------------------------------------\n";
+                    cout << endl;
+                    exit(0);
+                    break;
+ 
+                // Shfaq mesazh errori kur perdoruesi nuk ka futur sakte te dhenat e kerkuara
+                default:
+                    cout << "ERROR: Ju lutem zgjidhni nje nga opsionet qe shfaqet ne menu!";
+}
+}
+};
+
+// Main program
+int main() {
+    
+    User user1;
+    
+    user1.atmMainMenu();
+    ifstream usersFile("userData1.txt");
+    long begin, end;
+
+    if (usersFile.good())
+    {
+        cout << "File userData.txt found!\n\n";
+    }
+    
+    else {
+        user1.userRegister();
+    }
+
+    if(usersFile.is_open())
+    {
+        begin = usersFile.tellg();
+        usersFile.seekg (0, ios::end);
+
+        end = usersFile.tellg();
+        
+
+        if(begin == end)
+        {
+            user1.userRegister();
+        }
+
+        else
+            {
+                user1.login();
+            }
+    }
+
+    getch();
+    
+}
